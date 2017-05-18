@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: da45a5bc2c6c37349932d347e0f03d39
-timeCreated: 1494784035
+timeCreated: 1495143260
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -82,12 +82,12 @@ TextureImporter:
       name: left_stick
       rect:
         serializedVersion: 2
-        x: 210
-        y: 135
-        width: 84
-        height: 78
+        x: 219
+        y: 140
+        width: 67
+        height: 68
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
