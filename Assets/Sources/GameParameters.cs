@@ -8,7 +8,8 @@ public class GameParameters : ScriptableObject {
     // Values
     public float ROUND_DURATION;
     public float COOLDOWN_CARRY;
-    
+    public int SCORE_MODIFIER_BY_SECOND;
+
     //Players
     public List<int> PLAYERS_INDEXES = new List<int>();
 
@@ -23,11 +24,6 @@ public class GameParameters : ScriptableObject {
     // Colors
     public Color[] COLORS_PLAYER;
     public Color COLOR_NEUTRAL = Color.clear;
-
-    [Header("Text values")]
-    // Text
-    public string TEXT_PLAYER_DEATH_FALL;
-    public string TEXT_PLAYER_DEATH_NO_CLAIM;
 
     [Header("Animation")]
     public float INTRO_ANIMATION_DURATION;

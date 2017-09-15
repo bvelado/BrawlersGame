@@ -64,6 +64,8 @@ public class CharacterItemCarrier : MonoBehaviour {
         {
             itemModel.SetActive(true);
             itemModel.transform.Rotate(Vector3.up, Time.deltaTime, Space.Self);
+
+            GameManager.Instance.RoundManager.UpdateScore(GetComponent<CharacterData>().PlayerIndex, GameManager.Instance.Parameters.SCORE_MODIFIER_BY_SECOND);
         }
     }
 

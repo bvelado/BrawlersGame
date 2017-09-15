@@ -6,11 +6,14 @@ public class RoundManager : MonoBehaviour {
 
     private List<GameObject> characters = new List<GameObject>();
     private GameObject neutralItem;
+    private Dictionary<int, int> scoresByCharacterIndex = new Dictionary<int, int>();
+    private Dictionary<int, int> roundsByCharacterIndex = new Dictionary<int, int>();
         
 	public void InitializeNewRound(ECharacterControlType[] gameSetup)
     {
         // Resets the characters list
         characters.Clear();
+        scoresByCharacterIndex.Clear();
         var startingPositions = GameManager.Instance.CurrentGameStartingPositions;
 
         SpawNeutralItem(GameManager.Instance.NeutralItemPosition.position);
@@ -18,11 +21,16 @@ public class RoundManager : MonoBehaviour {
         for(int i = 0; i < gameSetup.Length; i++)
         {
             if(gameSetup[i] != ECharacterControlType.Empty)
-                SpawnCharacter(startingPositions[i].position, i, (gameSetup[i] == ECharacterControlType.Player) ? false : true);
+            {
+                var character = SpawnCharacter(startingPositions[i].position, i, (gameSetup[i] == ECharacterControlType.Player) ? false : true);
+                scoresByCharacterIndex.Add(i, 0);
+                if (!roundsByCharacterIndex.ContainsKey(i))
+                    roundsByCharacterIndex.Add(i, 0);
+            }
         }
     }
 
-    void SpawnCharacter(Vector3 position, int playerIndex, bool isBot)
+    GameObject SpawnCharacter(Vector3 position, int playerIndex, bool isBot)
     {
         GameObject character;
         // If it is a bot
@@ -44,6 +52,8 @@ public class RoundManager : MonoBehaviour {
         else
             character.GetComponent<CharacterInputs>().IsInterrupted = true;
         character.GetComponent<CharacterPhysics>().IsInterrupted = true;
+
+        return character;
     }
 
     void SpawNeutralItem(Vector3 position)
@@ -64,7 +74,7 @@ public class RoundManager : MonoBehaviour {
         }
     }
 
-    public void EndRound()
+    public void EndRound(int winnerIndex)
     {
         var tmpChars = characters.ToArray();
 
@@ -78,18 +88,50 @@ public class RoundManager : MonoBehaviour {
         if (neutralItem != null)
             Destroy(neutralItem);
         neutralItem = null;
+
+        roundsByCharacterIndex[winnerIndex]++;
     }
 
     public int GetWinnerIndex()
     {
-        foreach(var character in characters)
+        // Last character carrier is winner
+
+        if(GameManager.Instance.GameMode == EGameMode.LastOneStanding)
         {
-            if (character.GetComponent<CharacterItemCarrier>().IsCarrying)
+            foreach (var character in characters)
             {
-                return character.GetComponent<CharacterData>().PlayerIndex;
+                if (character.GetComponent<CharacterItemCarrier>().IsCarrying)
+                {
+                    return character.GetComponent<CharacterData>().PlayerIndex;
+                }
             }
+        } else if(GameManager.Instance.GameMode == EGameMode.Score)
+        {
+            // Best score character
+
+            int highestScoreCharacterIndex = 0;
+            int highestScore = 0;
+            foreach (var kvp in scoresByCharacterIndex)
+            {
+                if (kvp.Value > highestScore)
+                {
+                    highestScoreCharacterIndex = kvp.Key;
+                    highestScore = kvp.Value;
+                }
+
+            }
+            return highestScoreCharacterIndex;
         }
 
         return 0;
+    }
+
+    public void UpdateScore(int playerIndex, int scoreModifier)
+    {
+        if (scoresByCharacterIndex.ContainsKey(playerIndex))
+        {
+            scoresByCharacterIndex[playerIndex] += scoreModifier;
+            GameManager.Instance.UIManager.UpdatePlayerScore(playerIndex, roundsByCharacterIndex[playerIndex], scoresByCharacterIndex[playerIndex]);
+        }
     }
 }

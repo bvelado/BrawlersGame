@@ -26,6 +26,15 @@ public class GameSetup : MonoBehaviour {
         }
     }
 
+    private EGameMode gameMode;
+    public EGameMode GameMode
+    {
+        get
+        {
+            return gameMode;
+        }
+    }
+
     private void Awake()
     {
         if (instance != null)
@@ -36,6 +45,7 @@ public class GameSetup : MonoBehaviour {
         DontDestroyOnLoad(gameObject);
 
         gameSetup = new ECharacterControlType[4];
+        gameMode = EGameMode.Score;
     }
 
     void Start () {
@@ -52,13 +62,18 @@ public class GameSetup : MonoBehaviour {
     private void SceneManager_activeSceneChanged(Scene previousScene, Scene newScene)
     {
         if (newScene.buildIndex == 1 && GameManager.Instance != null)
-            GameManager.Instance.LaunchNewGame(gameSetup);
+            GameManager.Instance.LaunchNewGame(gameSetup, gameMode);
     }
 
-    public void SetGameSetup(int index, ECharacterControlType newSetup)
+    public void SetCharacterControlTypes(int index, ECharacterControlType newSetup)
     {
         if(index < 4 && index >= 0)
             gameSetup[index] = newSetup;
+    }
+
+    public void SetGameMode(EGameMode newGameMode)
+    {
+        gameMode = newGameMode;
     }
 
     private void OnDestroy()

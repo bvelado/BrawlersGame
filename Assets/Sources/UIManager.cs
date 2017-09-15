@@ -139,11 +139,16 @@ public class UIManager : MonoBehaviour {
         timer = GameManager.Instance.Parameters.ROUND_DURATION;
     }
 
-    public void SetPlayerScores(int[] scores)
+    public void SetPlayerRoundsWon(int[] rounds)
     {
         for(int i = 0; i < 4; i++)
         {
-            playerScores[i].text = "Player " + (i + 1) + "\r\n" + scores[i];
+            playerScores[i].text = "Player " + (i + 1) + "\r\nRounds won : " + rounds[i] + "\r\nScore : 0";
         }
+    }
+
+    public void UpdatePlayerScore(int playerIndex, int rounds, int score)
+    {
+        playerScores[playerIndex].text = "Player " + (playerIndex + 1) + "\r\nRounds won : " + rounds + "\r\nScore : " + score;
     }
 }

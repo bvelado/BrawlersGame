@@ -45,9 +45,32 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField]
     private RoundManager roundManager;
+    public RoundManager RoundManager
+    {
+        get
+        {
+            return roundManager;
+        }
+    }
 
     [SerializeField]
     private UIManager uiManager;
+    public UIManager UIManager
+    {
+        get
+        {
+            return uiManager;
+        }
+    }
+
+    private EGameMode gameMode;
+    public EGameMode GameMode
+    {
+        get
+        {
+            return gameMode;
+        }
+    }
 
     private ECharacterControlType[] gameSetup;
 
@@ -59,9 +82,10 @@ public class GameManager : MonoBehaviour {
             Destroy(gameObject);
     }
 
-    public void LaunchNewGame(ECharacterControlType[] gameSetup)
+    public void LaunchNewGame(ECharacterControlType[] gameSetup, EGameMode gameMode)
     {
         this.gameSetup = gameSetup;
+        this.gameMode = gameMode;
 
         // Rerolls the starting positions order
         RerollStartingPositions();
@@ -79,7 +103,7 @@ public class GameManager : MonoBehaviour {
         scores[2] = gameScore[2];
         scores[3] = gameScore[3];
 
-        uiManager.SetPlayerScores(scores);
+        uiManager.SetPlayerRoundsWon(scores);
 
         // Reinitialize the RoundManager
         roundManager.InitializeNewRound(gameSetup);
@@ -102,7 +126,7 @@ public class GameManager : MonoBehaviour {
     {
         var winner = roundManager.GetWinnerIndex();
         gameScore[winner]++;
-        roundManager.EndRound();
+        roundManager.EndRound(winner);
 
         bool gameWinner = false;
         foreach(var score in gameScore)
@@ -116,14 +140,13 @@ public class GameManager : MonoBehaviour {
 
         if (!gameWinner)
         {
+            int[] rounds = new int[4];
+            for (int i = 0; i < rounds.Length; i++)
+            {
+                rounds[i] = gameScore[i];
+            }
 
-            int[] scores = new int[4];
-            scores[0] = gameScore[0];
-            scores[1] = gameScore[1];
-            scores[2] = gameScore[2];
-            scores[3] = gameScore[3];
-
-            uiManager.SetPlayerScores(scores);
+            uiManager.SetPlayerRoundsWon(rounds);
 
             // Reinitialize the RoundManager
             roundManager.InitializeNewRound(gameSetup);

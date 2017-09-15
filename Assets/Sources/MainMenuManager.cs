@@ -7,6 +7,9 @@ public class MainMenuManager : MonoBehaviour {
     [SerializeField]
     private Text[] characterControlTexts;
 
+    [SerializeField]
+    private Text gameModeText;
+
     private GameSetup gameSetup;
 
     private void Start()
@@ -30,10 +33,10 @@ public class MainMenuManager : MonoBehaviour {
         {
             this.gameSetup = new GameObject("GameSetup").AddComponent<GameSetup>();
 
-            this.gameSetup.SetGameSetup(0, ECharacterControlType.Player);
-            this.gameSetup.SetGameSetup(1, ECharacterControlType.Bot);
-            this.gameSetup.SetGameSetup(2, ECharacterControlType.Empty);
-            this.gameSetup.SetGameSetup(3, ECharacterControlType.Empty);
+            this.gameSetup.SetCharacterControlTypes(0, ECharacterControlType.Player);
+            this.gameSetup.SetCharacterControlTypes(1, ECharacterControlType.Bot);
+            this.gameSetup.SetCharacterControlTypes(2, ECharacterControlType.Empty);
+            this.gameSetup.SetCharacterControlTypes(3, ECharacterControlType.Empty);
         }
     }
 
@@ -64,11 +67,11 @@ public class MainMenuManager : MonoBehaviour {
     {
         ECharacterControlType newCharacterControl;
         if (gameSetup.Setup[playerIndex] - 1 < 0)
-            newCharacterControl = ECharacterControlType.Empty;
+            newCharacterControl = ECharacterControlType.Count - 1;
         else
             newCharacterControl = gameSetup.Setup[playerIndex] - 1;
 
-        gameSetup.SetGameSetup(playerIndex, newCharacterControl);
+        gameSetup.SetCharacterControlTypes(playerIndex, newCharacterControl);
         characterControlTexts[playerIndex].text = newCharacterControl.ToString();
     }
 
@@ -80,8 +83,54 @@ public class MainMenuManager : MonoBehaviour {
         else
             newCharacterControl = gameSetup.Setup[playerIndex] + 1;
 
-        gameSetup.SetGameSetup(playerIndex, newCharacterControl);
+        gameSetup.SetCharacterControlTypes(playerIndex, newCharacterControl);
         characterControlTexts[playerIndex].text = newCharacterControl.ToString();
+    }
+
+    public void ScrollGameModeRight()
+    {
+        EGameMode newGameMode;
+        if (gameSetup.GameMode + 1 == EGameMode.Count)
+            newGameMode = EGameMode.Score;
+        else
+            newGameMode = gameSetup.GameMode + 1;
+
+        gameSetup.SetGameMode(newGameMode);
+        switch (newGameMode)
+        {
+            case EGameMode.Score:
+                gameModeText.text = "Score";
+                break;
+            case EGameMode.LastOneStanding:
+                gameModeText.text = "Last crown owner";
+                break;
+            default:
+                gameModeText.text = "Score";
+                break;
+        }
+    }
+
+    public void ScrollGameModeLeft()
+    {
+        EGameMode newGameMode;
+        if (gameSetup.GameMode - 1 < 0)
+            newGameMode = EGameMode.Count - 1;
+        else
+            newGameMode = gameSetup.GameMode - 1;
+
+        gameSetup.SetGameMode(newGameMode);
+        switch (newGameMode)
+        {
+            case EGameMode.Score:
+                gameModeText.text = "Score";
+                break;
+            case EGameMode.LastOneStanding:
+                gameModeText.text = "Last crown owner";
+                break;
+            default:
+                gameModeText.text = "Score";
+                break;
+        }
     }
 
 }
